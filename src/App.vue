@@ -35,20 +35,20 @@
         </p>
       </header>
       <div class="card-content">
-        <div class="content" v-if="checkEdit">
+        <div class="content" v-if="checkEdit !== key">
           {{show.date}}
           <br>
           {{show.mess}}
         </div>
         <div class="content" v-else>
-          {{show.date}}
+          <input type="date" name="" value="" v-model="show.date">
           <br>
-          {{show.mess}}
+          <input type="textarea" name="" value="" v-model="show.mess">
         </div>
       </div>
       <footer class="card-footer">
-        <a class="card-footer-item" @click="swap(false)" v-if="checkEdit" >Edit</a>
-        <a class="card-footer-item" @click="update(key)" v-else >save</a>
+        <a class="card-footer-item" @click="swap(key)" v-if="checkEdit !== key" >Edit</a>
+        <a class="card-footer-item" @click="update(key,show.date,show.mess)" v-else >save</a>
         <a class="card-footer-item" @click="deleteData(key)">Delete</a>
       </footer>
     </div>
@@ -90,7 +90,7 @@ export default {
       },
       note: [],
       datas: getData,
-      checkEdit: true
+      checkEdit: ''
     }
   },
   methods: {
@@ -104,9 +104,13 @@ export default {
     swap: function (data) {
       this.checkEdit = data
     },
-    update: function (key) {
+    update: function (key,date,mess) {
     console.log(key)
-    db.ref('/').child(key).push()
+    db.ref('/').child(key).update({
+      date:date,
+      mess:mess
+    });
+    this.checkEdit = ''
     },
     insert: function () {
       if (this.mess !== '' && this.header !== '' && this.date !== '') {
